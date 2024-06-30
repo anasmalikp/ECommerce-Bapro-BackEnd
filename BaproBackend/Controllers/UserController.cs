@@ -1,7 +1,6 @@
 ﻿using BaproBackend.Data.DTO;
 using BaproBackend.Data.Models;
 using BaproBackend.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BaproBackend.Controllers
@@ -39,7 +38,7 @@ namespace BaproBackend.Controllers
             {
                 return BadRequest("something went wrong");
             }
-            return Ok(token);
+            return Ok(new { Token = token });
         }
     }
 }
