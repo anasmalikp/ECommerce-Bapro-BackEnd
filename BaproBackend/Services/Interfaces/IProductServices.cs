@@ -9,5 +9,6 @@ namespace BaproBackend.Services.Interfaces
         Task<bool> AddNewProduct(ProductsDTO product, IFormFile image);
         Task<bool> EditProduct(string productId, ProductsDTO product, IFormFile image);
         Task<bool> DeleteProduct(string ProductId);
+        Task<products> GetProductByID(string ProductId);
     }
 }

@@ -133,5 +133,24 @@ namespace BaproBackend.Services
                 return false;
             }
         }
+
+        public async Task<products> GetProductByID(string ProductId)
+        {
+            try
+            {
+                var product = await provider.GetByID<products>(Constants.Tables.products.ToString(), ProductId);
+                if (product == null)
+                {
+                    Console.WriteLine("something went while fetching the product");
+                    return null;
+                }
+                return product;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
     }
 }

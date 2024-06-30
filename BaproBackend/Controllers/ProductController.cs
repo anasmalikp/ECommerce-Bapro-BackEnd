@@ -39,5 +39,17 @@ namespace BaproBackend.Controllers
             }
             return BadRequest("Something went wrong");
         }
+
+        [HttpGet("getbyid")]
+        [Authorize]
+        public async Task<IActionResult> GetByID(string productId)
+        {
+            var result = await services.GetProductByID(productId);
+            if(result == null)
+            {
+                return NotFound("product not found");
+            }
+            return Ok(result);
+        }
     }
 }
