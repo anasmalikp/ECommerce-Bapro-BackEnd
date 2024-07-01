@@ -1,4 +1,5 @@
 ﻿using BaproBackend.Data.DTO;
+using BaproBackend.Data.Encryption;
 using BaproBackend.Data.Models;
 using BaproBackend.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,10 @@ namespace BaproBackend.Controllers
             {
                 return BadRequest("something went wrong");
             }
-            return Ok(new { Token = token });
+            var userName = PasswordHasher.TokenDecode(token);
+            return Ok(new { Token = token, username = userName.username });
         }
+
+        
     }
 }

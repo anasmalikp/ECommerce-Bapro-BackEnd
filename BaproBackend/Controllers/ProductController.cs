@@ -29,7 +29,7 @@ namespace BaproBackend.Controllers
 
         
         [HttpPost]
-        [Authorize]
+        /*[Authorize]*/
         public async Task<IActionResult> AddNewProduct([FromForm] ProductsDTO product, IFormFile image )
         {
             var result = await services.AddNewProduct(product, image);

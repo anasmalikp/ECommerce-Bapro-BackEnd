@@ -17,6 +17,7 @@ builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<ICartServices, CartServices>();
 builder.Services.AddAutoMapper(typeof(MapperClass));
 
 builder.Services.AddAuthentication(options =>

@@ -1,4 +1,6 @@
-﻿namespace BaproBackend.Data.Interfaces
+﻿using BaproBackend.Data.Models;
+
+namespace BaproBackend.Data.Interfaces
 {
     public interface IPasswordHasher
     {
