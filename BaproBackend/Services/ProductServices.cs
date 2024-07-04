@@ -13,12 +13,14 @@ namespace BaproBackend.Services
         private readonly IMapper mapper;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly string HostUrl;
-        public ProductServices(IDataProvider provider, IMapper mapper, IWebHostEnvironment webHostEnvironment, IConfiguration config)
+        private readonly ILogger<ProductServices> logger;
+        public ProductServices(IDataProvider provider, IMapper mapper, IWebHostEnvironment webHostEnvironment, IConfiguration config, ILogger<ProductServices> logger)
         {
             this.provider = provider;
             this.mapper = mapper;
             this.webHostEnvironment = webHostEnvironment;
             this.HostUrl = config["HostUrl:url"];
+            this.logger = logger;
         }
 
         public async Task<IEnumerable<products>> GetAllProducts()
@@ -63,7 +65,7 @@ namespace BaproBackend.Services
                 var result = await provider.Insert<products>(Constants.Tables.products.ToString(), prd);
                 if(result < 1)
                 {
-                    Console.WriteLine("something went wrong while adding the product");
+                    logger.LogError("Something went wrong while adding the product");
                     return false;
                 }
                 Console.WriteLine("product added successfully");

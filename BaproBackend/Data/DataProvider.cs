@@ -71,7 +71,7 @@ namespace BaproBackend.Data
                 var data = prop.GetValue(entity);
                 if(data != null)
                 {
-                    condition += $"{prop.Name}=@{prop.Name} and";
+                    condition += $"{prop.Name}=@{prop.Name} and ";
                 }
             }
             condition = condition.Substring(0, condition.Length-4);

@@ -3,15 +3,18 @@ using BaproBackend.Data.Encryption;
 using BaproBackend.Data.Interfaces;
 using BaproBackend.Data.Models;
 using BaproBackend.Services.Interfaces;
+using System.Runtime.CompilerServices;
 
 namespace BaproBackend.Services
 {
     public class CartServices : ICartServices
     {
         private readonly IDataProvider provider;
-        public CartServices(IDataProvider provider)
+        private readonly ILogger<CartServices> logger;
+        public CartServices(IDataProvider provider, ILogger<CartServices> logger)
         {
             this.provider = provider;
+            this.logger = logger;
         }
 
         public async Task<bool> AddToCart(string productId, string token)
@@ -21,6 +24,7 @@ namespace BaproBackend.Services
                 var product = await provider.GetByID<products>(Constants.Tables.products.ToString(), productId);
                 var decoded = PasswordHasher.TokenDecode(token);
                 var user = await provider.GetAllByCondition<cart>(Constants.Tables.cart.ToString(), new cart { user_id = decoded.user_id });
+                logger.LogInformation($"user cart number = {user.Count()}");
                 if (user.Count() == 0)
                 {
                     cart cartDetails = new cart
@@ -31,12 +35,9 @@ namespace BaproBackend.Services
                     var addToCart = await provider.Insert<cart>(Constants.Tables.cart.ToString(), cartDetails);
                     if (addToCart < 1)
                     {
+                        logger.LogError("something went wrong while adding the user to cart");
                         return false;
-                    }
-                    var existing = await provider.GetAllByCondition<cartitem>(Constants.Tables.cartitem.ToString(), new cartitem { cart_id = cartDetails.id, product_id = product.id });
-                    if (existing != null)
-                    {
-                        return false;
+
                     }
                     cartitem productInCart = new cartitem
                     {
@@ -50,17 +51,21 @@ namespace BaproBackend.Services
                     var addToCartItem = await provider.Insert<cartitem>(Constants.Tables.cartitem.ToString(), productInCart);
                     if (addToCartItem < 1)
                     {
+                        logger.LogError("something went wrong while adding the product to cart");
                         return false;
                     }
+                    logger.LogInformation("product added successfully");
                     return true;
                 }
                 else
                 {
                     var existingproduct = await provider.GetAllByCondition<cartitem>(Constants.Tables.cartitem.ToString(), new cartitem { cart_id = user.FirstOrDefault().id, product_id = product.id });
-                    if (existingproduct.Any())
+                    if (existingproduct.Count() > 0)
                     {
+                        logger.LogError("product already in cart");
                         return false;
                     }
+                    logger.LogInformation("after checking the product");
                     cartitem prod = new cartitem
                     {
                         id = Constants.GenerateId(),
@@ -73,13 +78,16 @@ namespace BaproBackend.Services
                     var final = await provider.Insert<cartitem>(Constants.Tables.cartitem.ToString(), prod);
                     if (final < 1)
                     {
+                        logger.LogError("something went wrong while adding");
                         return false;
                     }
+                    logger.LogInformation("added");
                     return true;
                 }
             }
             catch (Exception ex)
             {
+                logger.LogError($"{ex.Message}");
                 return false;
             }
         }
