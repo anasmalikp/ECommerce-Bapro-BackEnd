@@ -1,4 +1,5 @@
 ﻿using BaproBackend.Data;
+using BaproBackend.Data.DTO;
 using BaproBackend.Data.Encryption;
 using BaproBackend.Data.Interfaces;
 using BaproBackend.Data.Models;
@@ -11,10 +12,12 @@ namespace BaproBackend.Services
     {
         private readonly IDataProvider provider;
         private readonly ILogger<CartServices> logger;
-        public CartServices(IDataProvider provider, ILogger<CartServices> logger)
+        private readonly string hostUrl;
+        public CartServices(IDataProvider provider, ILogger<CartServices> logger, IConfiguration config)
         {
             this.provider = provider;
             this.logger = logger;
+            this.hostUrl = config["HostUrl:url"];
         }
 
         public async Task<bool> AddToCart(string productId, string token)
@@ -102,12 +105,15 @@ namespace BaproBackend.Services
                 var result = await provider.Update<cartitem>(Constants.Tables.cartitem.ToString(), product);
                 if (result < 1)
                 {
+                    logger.LogError($"error while updating the cart");
                     return false;
                 }
+                logger.LogInformation("updated successfully");
                 return true;
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return false;
             }
         }
@@ -129,7 +135,7 @@ namespace BaproBackend.Services
             }
         }
 
-        public async Task<IEnumerable<cartitem>> GetAllCartItems(string token)
+        public async Task<IEnumerable<ProductsDTO>> GetAllCartItems(string token)
         {
             var user = PasswordHasher.TokenDecode(token);
             var cartdetails = await provider.GetAllByCondition<cart>(Constants.Tables.cart.ToString(), new cart { user_id = user.user_id });
@@ -138,7 +144,24 @@ namespace BaproBackend.Services
             {
                 return null;
             }
-            return cartproducts;
+            List<ProductsDTO> cartItems = new List<ProductsDTO>();
+            foreach(var prd in cartproducts)
+            {
+                var product = await provider.GetByID<products>(Constants.Tables.products.ToString(), prd.product_id);
+                ProductsDTO productsDTO = new ProductsDTO();
+                if (product != null)
+                {
+                    productsDTO.id = product.id;
+                    productsDTO.price = prd.total_price;
+                    productsDTO.image_url = hostUrl + product.image_url;
+                    productsDTO.quantity = prd.cart_qty;
+                    productsDTO.mrp = product.mrp * prd.cart_qty;
+                    productsDTO.cart_id = prd.id;
+                    cartItems.Add(productsDTO);
+                }
+                
+            }
+            return cartItems;
         }
     }
 }

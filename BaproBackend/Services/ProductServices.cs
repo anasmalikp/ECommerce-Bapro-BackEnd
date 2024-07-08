@@ -146,6 +146,7 @@ namespace BaproBackend.Services
                     Console.WriteLine("something went while fetching the product");
                     return null;
                 }
+                product.image_url = HostUrl + product.image_url;
                 return product;
             }
             catch(Exception ex)

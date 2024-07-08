@@ -16,7 +16,7 @@ namespace BaproBackend.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+       
         public async Task<IActionResult> GetAllProducts()
         {
             var result = await services.GetAllProducts();
@@ -41,7 +41,7 @@ namespace BaproBackend.Controllers
         }
 
         [HttpGet("getbyid")]
-        [Authorize]
+        
         public async Task<IActionResult> GetByID(string productId)
         {
             var result = await services.GetProductByID(productId);

@@ -44,14 +44,14 @@ namespace BaproBackend.Data
             {
                 if(prop.Name!="id"&& prop.GetValue(entity) != null)
                 {
-                    sets.Add($"{prop.Name}=@{prop.Name}");
+                    sets.Add($"{prop.Name} = @{prop.Name}");
                 }
             }
-            if( sets.Count > 0 )
+            if( sets.Count == 0 )
             {
                 return 0;
             }
-            string query = string.Format(Constants.UpdateQuery, tableName, string.Join(",", sets));
+            string query = string.Format(Constants.UpdateQuery, tableName, string.Join(", ", sets));
             return await connection.ExecuteAsync(query, entity);
             
         }

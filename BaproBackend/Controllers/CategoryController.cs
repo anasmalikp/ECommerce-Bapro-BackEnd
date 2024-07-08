@@ -16,7 +16,7 @@ namespace BaproBackend.Controllers
             this.services = services;
         }
 
-        [Authorize]
+        
         [HttpGet]
         public async Task<IActionResult> GetAllCategory()
         {
@@ -28,7 +28,7 @@ namespace BaproBackend.Controllers
             return Ok(result);
         }
 
-        [Authorize]
+        
         [HttpPost]
         public async Task<IActionResult> NewCategory(CategoriesDTO category)
         {

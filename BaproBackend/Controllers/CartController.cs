@@ -26,10 +26,10 @@ namespace BaproBackend.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateQty(string product_id, int qty)
+        [HttpPut("update_cart")]
+        public async Task<IActionResult> UpdateQty(string cart_id, int qty)
         {
-            var result = await services.ChangeQty(product_id, qty);
+            var result = await services.ChangeQty(cart_id, qty);
             if(result)
             {
                 return Ok();
