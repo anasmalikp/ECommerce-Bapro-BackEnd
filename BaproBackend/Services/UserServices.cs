@@ -40,6 +40,7 @@ namespace BaproBackend.Services
                 var usr = mapper.Map<users>(user);
                 usr.id = Constants.GenerateId();
                 usr.password = hasher.HashPassword(user.password);
+                usr.role = "user";
                 var result = await provider.Insert<users>(Constants.Tables.users.ToString(), usr);
                 if(result < 1)
                 {
@@ -83,7 +84,8 @@ namespace BaproBackend.Services
             var claims = new[]
             {
                 new Claim (ClaimTypes.NameIdentifier, user.id),
-                new Claim (ClaimTypes.Name, user.username)
+                new Claim (ClaimTypes.Name, user.username),
+                new Claim (ClaimTypes.Role, user.role)
             };
             var token = new JwtSecurityToken(
                 claims: claims,

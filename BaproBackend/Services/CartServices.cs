@@ -101,7 +101,6 @@ namespace BaproBackend.Services
             {
                 var product = await provider.GetByID<cartitem>(Constants.Tables.cartitem.ToString(), cartId);
                 product.cart_qty = qty;
-                product.total_price = product.total_price * qty;
                 var result = await provider.Update<cartitem>(Constants.Tables.cartitem.ToString(), product);
                 if (result < 1)
                 {
@@ -159,7 +158,6 @@ namespace BaproBackend.Services
                     productsDTO.cart_id = prd.id;
                     cartItems.Add(productsDTO);
                 }
-                
             }
             return cartItems;
         }
